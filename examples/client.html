@@ -1,0 +1,25 @@
+<script>
+var sock = new WebSocket("ws://127.0.0.1:7777");
+var msg = {
+  method: "GET",
+  path: "string",
+  data: ""
+};
+
+
+
+sock.onopen = function (event) {
+  sock.onmessage = function (event) {
+    console.log("onmessage");
+    console.log(event.data);
+  };
+  console.log("onopen");
+  sock.send(JSON.stringify(msg));
+};
+
+sock.onclose = function (event) {
+  console.log("onclose");
+  console.log(event.data);
+};
+
+</script>
