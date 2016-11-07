@@ -8,23 +8,18 @@ class  Connection(VSThread):
 	def __init__(self, server, connection):
 		self.wsconnection = connection
 		self.server = server
-		self.isactive = True
+		self.lock = Lock()
 		super(Connection, self).__init__()
 
-	def is_active(self):
-		return self.isactive
-
 	def run (self):
-		print("--> Client start")
 		while not self.stopped():
-			print("--> Client run")
 			# Wait for message
 			msg = self.wsconnection.receive_message()
 
 			# Check if client cliosing connection
 			if msg.type == CLOSE_MESSAGE:
-				self.isactive = False
-				self.wsconnection.close()
+				self.stop()
+				self.server.remove_client(self)
 				return
 
 			# Hendle message
@@ -39,11 +34,7 @@ class  Connection(VSThread):
 				else:
 					resp = Response (404)
 			sresp = resp.encode()
-			print sresp
 			self.wsconnection.send_message(sresp)
-		print("--> Client end")
-		del self
 
 	def __del__(self):
-		print "Conection distroied"
 		self.wsconnection.close()

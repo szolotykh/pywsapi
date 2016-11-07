@@ -15,6 +15,7 @@ sock.onopen = function (event) {
   };
   console.log("onopen");
   sock.send(JSON.stringify(msg));
+	sock.close();
 };
 
 sock.onclose = function (event) {
